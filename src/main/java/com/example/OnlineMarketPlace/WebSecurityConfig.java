@@ -11,40 +11,42 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfig {
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
-    @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder authenticationManagerBuilder =
-                http.getSharedObject(AuthenticationManagerBuilder.class);
-        authenticationManagerBuilder.userDetailsService(customUserDetailsService).passwordEncoder(passwordEncoder());
-        return authenticationManagerBuilder.build();
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(customUserDetailsService);
     }
 
-    @Bean
-    protected SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
-        return http
-                .authorizeHttpRequests( auth -> auth
-                .requestMatchers( "/login", "/loginPage", "/register", "/registerPage").permitAll()
-                                //.requestMatchers("/admin").hasRole("ADMIN")
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable().authorizeRequests() //authorization check happens in bottom to top manner. matcher with arbitrary scope is placed in bottom.
+                .antMatchers("/index").hasAuthority("ROLE_USER")
+                .antMatchers("/login", "/loginPage", "/register", "/registerPage").permitAll()
                 .anyRequest().authenticated()
-                )
-                .formLogin(form -> form.defaultSuccessUrl("/index", true))
-                .logout(config -> config.logoutSuccessUrl("/loginPage"))
-                .build();
-
-        //by default spring handles login request at url /login and logout at /logout. but we can change it to other url in formLogin and logout option above. .loginPage("/loginPage")
+                .and().formLogin().loginPage("/loginPage").loginProcessingUrl("/login").defaultSuccessUrl("/index", true).permitAll().and().rememberMe()
+                .and().logout()
+                .logoutSuccessUrl("/loginPage") // URL to redirect after logout (optional) .hasAuthority("ROLE_USER") .loginPage("/loginPage").loginProcessingUrl("/login")
+                ;
     }
 
+
+    @Bean
+    DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+        daoAuthenticationProvider.setUserDetailsService(customUserDetailsService);
+        return daoAuthenticationProvider;
+    }
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {

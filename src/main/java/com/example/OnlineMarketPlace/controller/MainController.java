@@ -2,9 +2,7 @@ package com.example.OnlineMarketPlace.controller;
 import com.example.OnlineMarketPlace.DTO.AppUserDTO;
 import com.example.OnlineMarketPlace.database.UserRepository;
 import com.example.OnlineMarketPlace.model.AppUser;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,7 +13,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.validation.Valid;
 import java.util.Date;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/")
@@ -34,8 +34,6 @@ public class MainController {
 
     @GetMapping("loginPage")
     public String loginPage(Model model) {
-        AppUserDTO appUserDTO = new AppUserDTO();
-        model.addAttribute(appUserDTO);
         return "login";
     }
 
@@ -59,8 +57,8 @@ public class MainController {
             );
         }
 
-        AppUser appUser = repo.findByEmail(appUserDTO.getEmail());
-        if (appUser != null)
+        Optional<AppUser> appUser = repo.findByEmail(appUserDTO.getEmail());
+        if (appUser.isPresent())
         {
             result.addError(
                     new FieldError("appUserDTO", "email",
