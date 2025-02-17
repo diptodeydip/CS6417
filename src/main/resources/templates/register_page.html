@@ -49,10 +49,6 @@
     <h2>Register</h2>
     <hr />
 
-    <div th:if="${success}">Account Created Successfully!
-        <p><a th:href="@{/loginPage}">Go to login page</a></p>
-    </div>
-
     <form th:action="@{/register}" th:object="${appUserDTO}" method="post">
 
         <label>First Name</label>

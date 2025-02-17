@@ -30,12 +30,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeRequests() //authorization check happens in bottom to top manner. matcher with arbitrary scope is placed in bottom.
-                .antMatchers("/index").hasAuthority("ROLE_USER")
                 .antMatchers("/login", "/loginPage", "/register", "/registerPage").permitAll()
                 .anyRequest().authenticated()
-                .and().formLogin().loginPage("/loginPage").loginProcessingUrl("/login").defaultSuccessUrl("/index", true).permitAll().and().rememberMe()
-                .and().logout()
-                .logoutSuccessUrl("/loginPage") // URL to redirect after logout (optional) .hasAuthority("ROLE_USER") .loginPage("/loginPage").loginProcessingUrl("/login")
+                .and()
+                .formLogin()
+                .loginPage("/loginPage")
+                .loginProcessingUrl("/login")
+                .failureUrl("/loginPage?error=true")
+                .defaultSuccessUrl("/index", true).permitAll().and().rememberMe()
+                .and()
+                .logout()
+                .logoutSuccessUrl("/loginPage?logout=true") // URL to redirect after logout (optional) .hasAuthority("ROLE_USER") .loginPage("/loginPage").loginProcessingUrl("/login")
                 ;
     }
 

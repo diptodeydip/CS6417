@@ -1,8 +1,11 @@
 package com.example.OnlineMarketPlace.controller;
+import com.example.OnlineMarketPlace.Commons;
 import com.example.OnlineMarketPlace.DTO.AppUserDTO;
 import com.example.OnlineMarketPlace.database.UserRepository;
 import com.example.OnlineMarketPlace.model.AppUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,7 +15,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.Date;
 import java.util.Optional;
@@ -28,26 +33,32 @@ public class MainController {
     private BCryptPasswordEncoder passwordEncoder;
 
     @GetMapping("index")
-    public String index(Model model) {
+    public String index(Model model, HttpSession session) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName(); // Fetch logged-in username
+        Optional<AppUser> appUser = repo.findByEmail(email);
+
+        // Store username in session
+        session.setAttribute(Commons.name, appUser.get().getFirstName()+ " " + appUser.get().getLastName());
+        session.setAttribute(Commons.userId, appUser.get().getId());
         return "index";
     }
 
     @GetMapping("loginPage")
     public String loginPage(Model model) {
-        return "login";
+        return "login_page";
     }
 
     @GetMapping("registerPage")
     public String register(Model model) {
         AppUserDTO appUserDTO = new AppUserDTO();
         model.addAttribute(appUserDTO);
-        model.addAttribute("success", false);
-        return "register";
+        return "register_page";
     }
 
     @PostMapping("register")
     public String processRegister(Model model, @Valid @ModelAttribute AppUserDTO appUserDTO
-    , BindingResult result) {
+    , BindingResult result, RedirectAttributes redirectAttributes) {
 
         if (!appUserDTO.getPassword().equals(appUserDTO.getConfirmPassword()))
         {
@@ -67,7 +78,7 @@ public class MainController {
         }
 
         if (result.hasErrors()){
-            return "register";
+            return "register_page";
         }
 
         try {
@@ -80,17 +91,16 @@ public class MainController {
 
             repo.save(newUser);
 
-            model.addAttribute("appUserDTO", new AppUserDTO());
-            model.addAttribute("success", true);
-
         }catch (Exception e){
             result.addError(
                     new FieldError("appUserDTO", "firstName",
                             e.getMessage())
             );
+            return "register_page";
         }
 
-        return "register";
+        redirectAttributes.addFlashAttribute("message", "Account created successfully!");
+        return "redirect:/loginPage";
     }
 
 }

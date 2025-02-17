@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome to Online MarketPlace</title>
+    <style>
+        .container {
+            padding: 20px;
+            height: 100vh; /* Ensure it takes full height */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background-color: #28a745; /* Green color */
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .navbar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+        }
+        .navbar li {
+            margin: 0 10px;
+        }
+        .navbar a {
+            text-decoration: none;
+            color: black;
+            padding: 8px 12px;
+            display: block;
+        }
+        .navbar a:hover {
+            background-color: #218838; /* Darker green for hover */
+        }
+        .navbar .right {
+            margin-left: auto;
+        }
+        .container {
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <a th:href="@{/index}" class="navbar-brand" th:text="'Welcome ' + ${session.name}">Welcome, ...</a>
+    <ul class="right">
+        <li><a href="#">Profile</a></li>
+        <li><a th:href="@{/addProductPage}">Add Product</a></li>
+        <li><a th:href="@{/products}">Products</a></li>
+        <li><a th:href="@{/logout}">Logout</a></li>
+    </ul>
+</nav>
+
+    <div class="container" layout:fragment="custom-content">
+        <p>Custom content will be shown here if inherited from another</p>
+    </div>
+
+</body>
+</html>

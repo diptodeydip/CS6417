@@ -1,9 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/template.html}">
 <head>
-    <title>Hello World</title>
+    <meta charset="UTF-8">
+    <style>
+
+        .center-text {
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Full viewport height */
+            flex-direction: column; /* Stack elements vertically */
+        }
+
+
+    </style>
 </head>
 <body>
-<h1>Hello, World!</h1>
+
+    <div class="center-text" layout:fragment="custom-content">
+        <p>This project is a part of CS6417</p>
+    </div>
+
 </body>
 </html>
