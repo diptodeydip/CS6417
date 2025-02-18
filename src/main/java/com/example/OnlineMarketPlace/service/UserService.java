@@ -1,5 +1,6 @@
 package com.example.OnlineMarketPlace.service;
 
+import com.example.OnlineMarketPlace.DTO.AppUserDTO;
 import com.example.OnlineMarketPlace.DTO.PasswordChangeDTO;
 import com.example.OnlineMarketPlace.database.UserRepository;
 import com.example.OnlineMarketPlace.model.AppUser;
@@ -32,5 +33,13 @@ public class UserService {
         } else {
             return false; // Current password is incorrect
         }
+    }
+
+    public void updateProfile(String email, AppUserDTO appUserDTO){
+        Optional<AppUser> user = userRepository.findByEmail(email);
+        user.get().setFirstName(appUserDTO.getFirstName());
+        user.get().setLastName(appUserDTO.getLastName());
+        user.get().setEmail(appUserDTO.getEmail());
+        userRepository.save(user.get());
     }
 }

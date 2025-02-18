@@ -10,6 +10,8 @@ import java.util.Date;
 
 public class AppUserDTO {
 
+    private Long id;
+
     @NotEmpty
     @Email
     private String email;
@@ -25,7 +27,15 @@ public class AppUserDTO {
     @NotEmpty
     private String lastName;
 
+    private Date createdAt;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getEmail() {
         return email;
@@ -65,5 +75,13 @@ public class AppUserDTO {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 }

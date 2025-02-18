@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/template.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>User Profile</title>
+    <link rel="stylesheet" href="/css/styles.css"> <!-- Your external styles -->
+    <style>
+        .profile-container {
+            width: 80%;
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .profile-info {
+            margin-bottom: 30px;
+        }
+        .profile-info p {
+            font-size: 1.2em;
+            margin: 5px 0;
+        }
+        .profile-info label {
+            font-weight: bold;
+        }
+        .profile-form input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .profile-form button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .profile-form button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+<div class="center-text" layout:fragment="custom-content">
+    <div class="profile-container">
+        <h2>User Profile</h2>
+
+        <div th:if="${message}">
+            <!-- Success Modal -->
+            <div class="modal-overlay">
+                <div class="modal">
+                    <p th:text="${message}"></p>
+                    <button class="close-btn" onclick="closeModal()">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Display user profile information -->
+        <div class="profile-info">
+            <p><strong>Email:</strong> <span th:text="${appUserDTO.email}"></span></p>
+            <p><strong>First Name:</strong> <span th:text="${appUserDTO.firstName}"></span></p>
+            <p><strong>Last Name:</strong> <span th:text="${appUserDTO.lastName}"></span></p>
+            <p><strong>Account Created On:</strong> <span th:text="${#dates.format(appUserDTO.createdAt, 'dd MMM yyyy')}"></span></p>
+        </div>
+
+        <!-- Form to update profile -->
+        <h3>Update Profile</h3>
+        <form th:action="@{/updateProfile}" th:object="${appUserDTO}" method="post" class="profile-form">
+            <input type="hidden" th:field="*{id}" />
+            <label for="firstName">First Name</label>
+            <input type="text" id="firstName" th:field="*{firstName}" required>
+
+            <label for="lastName">Last Name</label>
+            <input type="text" id="lastName" th:field="*{lastName}" required>
+            <label for="email">Email</label>
+            <input type="email" id="email" th:field="*{email}" required>
+            <p th:if="${#fields.hasErrors('email')}" class="warning"
+               th:errors="*{email}"></p>
+            <button type="submit">Update Profile</button>
+        </form>
+    </div>
+
+</div>
+</body>
+</html>

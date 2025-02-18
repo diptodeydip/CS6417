@@ -3,7 +3,7 @@
       layout:decorate="~{layout/template.html}">
 <head>
     <meta charset="UTF-8">
-    <title>Add Product</title>
+    <title>Feedback</title>
     <style>
         .form-container {
             max-width: 400px;
@@ -48,24 +48,24 @@
 
 <div class="center-text" layout:fragment="custom-content">
     <div class="form-container">
-        <h3>Upload Product</h3>
-        <form  th:action="@{/addProduct}" th:object="${productDTO}" method="post" enctype="multipart/form-data">
-            <label for="name">Product Name:</label>
-            <input type="text" id="name" th:field="*{name}" class="form-control" placeholder="Product Name"
-                   required/><p th:if="${#fields.hasErrors('name')}" th:errorclass="text-danger"
-                                th:errors="*{name}"></p>
+        <h3>Send Feedback</h3>
 
-            <label for="price">Price:</label>
-            <input type="number" id="price" step="0.01" th:field="*{price}" class="form-control" placeholder="Price"
-                   required/>
+        <div th:if="${message}">
+            <!-- Success Modal -->
+            <div class="modal-overlay">
+                <div class="modal">
+                    <p th:text="${message}"></p>
+                    <button class="close-btn" onclick="closeModal()">Close</button>
+                </div>
+            </div>
+        </div>
 
-            <label for="description">Description:</label>
-            <textarea id="description" th:field="*{description}" name="description" rows="3" required></textarea>
+        <form  th:action="@{/submitFeedback}" th:object="${feedbackDTO}" method="post">
 
-            <label for="image">Product Image: (Max 4MB)</label>
-            <input type="file" id="image" name="image" th:field="*{imageFile}" accept="image/*" required>
+            <label for="feedback">Write here</label>
+            <textarea id="feedback" th:field="*{description}" name="feedback" rows="3" required></textarea>
 
-            <button type="submit">Upload Product</button>
+            <button type="submit">Submit</button>
         </form>
     </div>
 </div>

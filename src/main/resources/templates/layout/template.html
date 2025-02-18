@@ -5,6 +5,8 @@
     <title>Welcome to Online MarketPlace</title>
     <link rel="stylesheet" href="/css/common.css">
     <link rel="stylesheet" href="/css/modal.css">
+    <link rel="stylesheet" href="/css/feedbackModal.css">
+    <link rel="stylesheet" href="/css/navBar.css">
     <style>
         .container {
             padding: 20px;
@@ -17,37 +19,11 @@
 
         body {
             font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
             margin: 0;
             padding: 0;
         }
-        .navbar {
-            background-color: #28a745; /* Green color */
-            padding: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .navbar ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-        }
-        .navbar li {
-            margin: 0 10px;
-        }
-        .navbar a {
-            text-decoration: none;
-            color: black;
-            padding: 8px 12px;
-            display: block;
-        }
-        .navbar a:hover {
-            background-color: #218838; /* Darker green for hover */
-        }
-        .navbar .right {
-            margin-left: auto;
-        }
+
         .container {
             padding: 20px;
         }
@@ -57,9 +33,12 @@
 <nav class="navbar">
     <a th:href="@{/index}" class="navbar-brand" th:text="'Welcome ' + ${session.name}">Welcome, ...</a>
     <ul class="right">
-        <li><a href="#">Profile</a></li>
+        <li><a th:href="@{/profile}">Profile</a></li>
         <li><a th:href="@{/addProductPage}">Add Product</a></li>
         <li><a th:href="@{/products}">Products</a></li>
+        <li><a th:href="@{/changePasswordForm}">Change Password</a></li>
+        <li><a th:href="@{/feedback}">Leave Feedback</a></li>
+        <li><a th:href="@{/feedbacks}"  >Feedbacks</a></li>
         <li><a th:href="@{/logout}">Logout</a></li>
     </ul>
 </nav>
@@ -68,11 +47,13 @@
         <p>Custom content will be shown here if inherited from another</p>
     </div>
 
+
 <script>
     // Function to close the modal
     function closeModal() {
         document.querySelector('.modal-overlay').style.display = 'none';
     }
+
 </script>
 </body>
 </html>

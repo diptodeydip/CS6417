@@ -1,6 +1,7 @@
 package com.example.OnlineMarketPlace.controller;
 import com.example.OnlineMarketPlace.Commons;
 import com.example.OnlineMarketPlace.DTO.AppUserDTO;
+import com.example.OnlineMarketPlace.DTO.FeedbackDTO;
 import com.example.OnlineMarketPlace.DTO.PasswordChangeDTO;
 import com.example.OnlineMarketPlace.database.UserRepository;
 import com.example.OnlineMarketPlace.model.AppUser;
@@ -46,6 +47,7 @@ public class MainController {
         // Store username in session
         session.setAttribute(Commons.name, appUser.get().getFirstName()+ " " + appUser.get().getLastName());
         session.setAttribute(Commons.userId, appUser.get().getId());
+
         return "index";
     }
 
@@ -108,39 +110,6 @@ public class MainController {
         return "redirect:/loginPage";
     }
 
-    @GetMapping("/changePasswordForm")
-    public String showChangePasswordForm(Model model) {
-        model.addAttribute("passwordChangeDTO", new PasswordChangeDTO());
-        return "change_password";
-    }
 
-    // Handle password change
-    @PostMapping("/changePassword")
-    public String changePassword(@Valid @ModelAttribute PasswordChangeDTO passwordChangeDTO, BindingResult result, Model model) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        if (!passwordChangeDTO.getNewPassword().equals(passwordChangeDTO.getConfirmPassword()))
-        {
-            result.addError(
-                    new FieldError("passwordChangeDTO", "confirmPassword",
-                            "Password didn't match")
-            );
-
-        }
-
-        if (result.hasErrors()){
-            return "change_password";
-        }
-
-        boolean isPasswordChanged = userService.changePassword(username, passwordChangeDTO);
-        if (isPasswordChanged) {
-            model.addAttribute("message", "Password changed successfully.");
-        } else {
-            model.addAttribute("message", "Failed to change password. Please check your current password.");
-        }
-
-        model.addAttribute("passwordChangeDTO", new PasswordChangeDTO());
-        return "change_password";
-    }
 
 }
