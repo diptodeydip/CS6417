@@ -30,7 +30,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeRequests() //authorization check happens in bottom to top manner. matcher with arbitrary scope is placed in bottom.
-                .antMatchers("/login", "/loginPage", "/register", "/registerPage").permitAll()
+                .antMatchers("/login", "/loginPage", "/register", "/registerPage", "/css/*").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()

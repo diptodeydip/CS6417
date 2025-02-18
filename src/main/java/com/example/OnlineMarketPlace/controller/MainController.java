@@ -1,8 +1,10 @@
 package com.example.OnlineMarketPlace.controller;
 import com.example.OnlineMarketPlace.Commons;
 import com.example.OnlineMarketPlace.DTO.AppUserDTO;
+import com.example.OnlineMarketPlace.DTO.PasswordChangeDTO;
 import com.example.OnlineMarketPlace.database.UserRepository;
 import com.example.OnlineMarketPlace.model.AppUser;
+import com.example.OnlineMarketPlace.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,6 +30,9 @@ public class MainController {
 
     @Autowired
     private UserRepository repo;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
@@ -101,6 +106,41 @@ public class MainController {
 
         redirectAttributes.addFlashAttribute("message", "Account created successfully!");
         return "redirect:/loginPage";
+    }
+
+    @GetMapping("/changePasswordForm")
+    public String showChangePasswordForm(Model model) {
+        model.addAttribute("passwordChangeDTO", new PasswordChangeDTO());
+        return "change_password";
+    }
+
+    // Handle password change
+    @PostMapping("/changePassword")
+    public String changePassword(@Valid @ModelAttribute PasswordChangeDTO passwordChangeDTO, BindingResult result, Model model) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        if (!passwordChangeDTO.getNewPassword().equals(passwordChangeDTO.getConfirmPassword()))
+        {
+            result.addError(
+                    new FieldError("passwordChangeDTO", "confirmPassword",
+                            "Password didn't match")
+            );
+
+        }
+
+        if (result.hasErrors()){
+            return "change_password";
+        }
+
+        boolean isPasswordChanged = userService.changePassword(username, passwordChangeDTO);
+        if (isPasswordChanged) {
+            model.addAttribute("message", "Password changed successfully.");
+        } else {
+            model.addAttribute("message", "Failed to change password. Please check your current password.");
+        }
+
+        model.addAttribute("passwordChangeDTO", new PasswordChangeDTO());
+        return "change_password";
     }
 
 }

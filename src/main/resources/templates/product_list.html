@@ -49,8 +49,20 @@
 
 <div class="center-text" layout:fragment="custom-content">
     <h2>Product List</h2>
-    <div th:if="${message}" class="alert alert-success">
+
+<!--    <div th:if="${message}" th:class="${messageType}">
+        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
         <p th:text="${message}"></p>
+    </div>-->
+
+    <div th:if="${message}">
+        <!-- Success Modal -->
+        <div class="modal-overlay">
+            <div class="modal">
+                <p th:text="${message}"></p>
+                <button class="close-btn" onclick="closeModal()">Close</button>
+            </div>
+        </div>
     </div>
 
     <table class="product-table">

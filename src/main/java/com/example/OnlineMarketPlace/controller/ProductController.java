@@ -83,18 +83,72 @@ public class ProductController {
         }
 
         redirectAttributes.addFlashAttribute("message", "Product uploaded successfully!");
+        redirectAttributes.addFlashAttribute("messageType", "flash-success");
         return "redirect:/products";
     }
 
     @GetMapping("products/delete/{id}")
     public String deleteProduct(@PathVariable Long id, RedirectAttributes redirectAttributes, HttpSession session) {
         Optional<Product> product = productRepo.findById(id);
-        if (product.isPresent() && session.getAttribute(Commons.userId) != product.get().getOwnerId()) {
-            redirectAttributes.addFlashAttribute("message", "Not authorized to delete this product");
-        }else {
+        if (product.isPresent() && session.getAttribute(Commons.userId) == product.get().getOwnerId()) {
             productRepo.deleteById(id);
             redirectAttributes.addFlashAttribute("message", "Product deleted successfully!");
+            redirectAttributes.addFlashAttribute("messageType", "flash-success");
+
+        }else {
+            redirectAttributes.addFlashAttribute("message", "Not authorized to delete this product");
+            redirectAttributes.addFlashAttribute("messageType", "flash-error");
         }
+        return "redirect:/products";
+    }
+
+    @GetMapping("products/edit/{id}")
+    public String editProduct(@PathVariable Long id, RedirectAttributes redirectAttributes, HttpSession session, Model model) {
+        Optional<Product> product = productRepo.findById(id);
+        if (product.isPresent() && session.getAttribute(Commons.userId) == product.get().getOwnerId()) {
+            ProductDTO productDTO = new ProductDTO();
+            productDTO.setId(product.get().getId());
+            productDTO.setName(product.get().getName());
+            productDTO.setDescription(product.get().getDescription());
+            productDTO.setPrice(product.get().getPrice());
+            model.addAttribute(productDTO);
+            return "edit_product_page";
+
+
+        }else {
+            redirectAttributes.addFlashAttribute("message", "Not authorized to edit this product");
+            redirectAttributes.addFlashAttribute("messageType", "flash-error");
+        }
+        return "redirect:/products";
+    }
+
+
+    @PostMapping("editProduct")
+    public String editProduct(Model model, @Valid @ModelAttribute ProductDTO productDTO
+            , BindingResult result, HttpSession session, RedirectAttributes redirectAttributes) {
+
+        try {
+            Product product = new Product();
+            product.setId(productDTO.getId());
+            product.setName(productDTO.getName());
+            product.setDescription(productDTO.getDescription());
+            product.setImage(productDTO.getImageFile().getBytes());
+            product.setPrice(productDTO.getPrice());
+            product.setOwnerId((Long) session.getAttribute(Commons.userId));
+            product.setCreatedAt(new Date());
+
+            productRepo.save(product);
+
+        }catch (Exception e){
+            result.addError(
+                    new FieldError("productDTO", "name",
+                            e.getMessage())
+            );
+            return "edit_product_page";
+        }
+
+        redirectAttributes.addFlashAttribute("message", "Product edited successfully!");
+        redirectAttributes.addFlashAttribute("messageType", "flash-success");
         return "redirect:/products";
     }
 }
