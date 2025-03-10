@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/css/modal.css">
     <link rel="stylesheet" href="/css/feedbackModal.css">
     <link rel="stylesheet" href="/css/navBar.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .container {
             padding: 20px;
@@ -33,12 +34,19 @@
 <nav class="navbar">
     <a th:href="@{/index}" class="navbar-brand" th:text="'Welcome ' + ${session.name}">Welcome, ...</a>
     <ul class="right">
-        <li><a th:href="@{/profile}">Profile</a></li>
-        <li><a th:href="@{/addProductPage}">Add Product</a></li>
-        <li><a th:href="@{/products}">Products</a></li>
-        <li><a th:href="@{/changePasswordForm}">Change Password</a></li>
-        <li sec:authorize="hasAuthority(T(com.example.OnlineMarketPlace.Commons).ROLE_USER)"><a th:href="@{/feedback}">Leave Feedback</a></li>
-        <li sec:authorize="hasAuthority(T(com.example.OnlineMarketPlace.Commons).ROLE_ADMIN)"><a th:href="@{/feedbacks}"  >Feedbacks</a></li>
+        <li class="dropdown">
+            <a href="javascript:void(0)" class="dropbtn"><i class="fa fa-bars" aria-hidden="true"></i></a>
+            <div class="dropdown-content">
+                <a th:href="@{/profile}">Profile</a>
+                <a th:href="@{/index}">Home</a>
+                <a th:href="@{/products}">Products</a>
+                <a th:href="@{/addProductPage}">Add Product</a>
+                <a th:href="@{/changePasswordForm}">Change Password</a>
+                <a sec:authorize="hasAuthority(T(com.example.OnlineMarketPlace.Commons).ROLE_USER)" th:href="@{/feedback}">Leave Feedback</a>
+                <a sec:authorize="hasAuthority(T(com.example.OnlineMarketPlace.Commons).ROLE_ADMIN)" th:href="@{/feedbacks}"  >Feedbacks</a>
+
+            </div>
+        </li>
         <li><a th:href="@{/logout}">Logout</a></li>
     </ul>
 </nav>
