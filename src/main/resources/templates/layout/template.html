@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
     <meta charset="UTF-8">
     <title>Welcome to Online MarketPlace</title>
@@ -37,8 +37,8 @@
         <li><a th:href="@{/addProductPage}">Add Product</a></li>
         <li><a th:href="@{/products}">Products</a></li>
         <li><a th:href="@{/changePasswordForm}">Change Password</a></li>
-        <li><a th:href="@{/feedback}">Leave Feedback</a></li>
-        <li><a th:href="@{/feedbacks}"  >Feedbacks</a></li>
+        <li sec:authorize="hasAuthority(T(com.example.OnlineMarketPlace.Commons).ROLE_USER)"><a th:href="@{/feedback}">Leave Feedback</a></li>
+        <li sec:authorize="hasAuthority(T(com.example.OnlineMarketPlace.Commons).ROLE_ADMIN)"><a th:href="@{/feedbacks}"  >Feedbacks</a></li>
         <li><a th:href="@{/logout}">Logout</a></li>
     </ul>
 </nav>

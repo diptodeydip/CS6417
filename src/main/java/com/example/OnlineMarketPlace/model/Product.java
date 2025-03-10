@@ -23,6 +23,9 @@ public class Product {
     @Column(nullable = false)
     private Long ownerId;
 
+    @Column(nullable = false)
+    private String contact;
+
     @Lob
     @Column(columnDefinition = "LONGBLOB")
     private byte[] image;
@@ -67,6 +70,14 @@ public class Product {
 
     public void setOwnerId(Long ownerId) {
         this.ownerId = ownerId;
+    }
+
+    public String getContact() {
+        return contact;
+    }
+
+    public void setContact(String contact) {
+        this.contact = contact;
     }
 
     public byte[] getImage() {

@@ -5,6 +5,7 @@ import com.example.OnlineMarketPlace.DTO.ProductDTO;
 import com.example.OnlineMarketPlace.database.ProductRepository;
 import com.example.OnlineMarketPlace.database.UserRepository;
 import com.example.OnlineMarketPlace.model.Product;
+import com.example.OnlineMarketPlace.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
@@ -32,6 +34,9 @@ public class ProductController {
 
     @Autowired
     private ProductRepository productRepo;
+
+    @Autowired
+    UserService userService;
 
     @GetMapping("products")
     public String index(Model model) {
@@ -69,6 +74,7 @@ public class ProductController {
             product.setDescription(productDTO.getDescription());
             product.setImage(productDTO.getImageFile().getBytes());
             product.setPrice(productDTO.getPrice());
+            product.setContact(productDTO.getContact());
             product.setOwnerId((Long) session.getAttribute(Commons.userId));
             product.setCreatedAt(new Date());
 
@@ -90,7 +96,7 @@ public class ProductController {
     @GetMapping("products/delete/{id}")
     public String deleteProduct(@PathVariable Long id, RedirectAttributes redirectAttributes, HttpSession session) {
         Optional<Product> product = productRepo.findById(id);
-        if (product.isPresent() && session.getAttribute(Commons.userId) == product.get().getOwnerId()) {
+        if (userService.isSameUser(product, session) || (userService.isAdmin((String) session.getAttribute(Commons.role)) && product.isPresent())) {
             productRepo.deleteById(id);
             redirectAttributes.addFlashAttribute("message", "Product deleted successfully!");
             redirectAttributes.addFlashAttribute("messageType", "flash-success");
@@ -105,10 +111,11 @@ public class ProductController {
     @GetMapping("products/edit/{id}")
     public String editProduct(@PathVariable Long id, RedirectAttributes redirectAttributes, HttpSession session, Model model) {
         Optional<Product> product = productRepo.findById(id);
-        if (product.isPresent() && session.getAttribute(Commons.userId) == product.get().getOwnerId()) {
+        if (userService.isSameUser(product, session)) {
             ProductDTO productDTO = new ProductDTO();
             productDTO.setId(product.get().getId());
             productDTO.setName(product.get().getName());
+            productDTO.setContact(product.get().getContact());
             productDTO.setDescription(product.get().getDescription());
             productDTO.setPrice(product.get().getPrice());
             model.addAttribute(productDTO);
@@ -134,6 +141,7 @@ public class ProductController {
             product.setDescription(productDTO.getDescription());
             product.setImage(productDTO.getImageFile().getBytes());
             product.setPrice(productDTO.getPrice());
+            product.setContact(productDTO.getContact());
             product.setOwnerId((Long) session.getAttribute(Commons.userId));
             product.setCreatedAt(new Date());
 

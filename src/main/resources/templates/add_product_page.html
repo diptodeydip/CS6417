@@ -59,8 +59,13 @@
             <input type="number" id="price" step="0.01" th:field="*{price}" class="form-control" placeholder="Price"
                    required/>
 
+            <label for="contact">Contact:</label>
+            <input type="text" id="contact" th:field="*{contact}" class="form-control" placeholder="Contact"
+                   required/>
+
             <label for="description">Description:</label>
             <textarea id="description" th:field="*{description}" name="description" rows="3" required></textarea>
+
 
             <label for="image">Product Image: (Max 4MB)</label>
             <input type="file" id="image" name="image" th:field="*{imageFile}" accept="image/*" required>

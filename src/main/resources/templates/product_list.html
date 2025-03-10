@@ -135,15 +135,18 @@
             <div th:each="product : ${products}" class="product-card">
                 <img th:src="@{'/products/image/' + ${product.id}}" alt="Product Image">
                 <a th:href="@{'/products/image/' + ${product.id}}">Click to view </a>
-                <h4 th:text="'Name:' + ${product.name}"></h4>
+                <h4 th:text="'Name: ' + ${product.name}"></h4>
                 <p th:text="'Price: ' + '$' + ${product.price}"></p>
-                <p th:text="'Description:' + ${product.description}"></p>
+                <p th:text="'Description: ' + ${product.description}"></p>
+                <p th:text="'Contact: ' + ${product.contact}"></p>
                 <p th:text="${#dates.format(product.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></p>
 
-                <div class="action-buttons" th:if="${session.userId == product.ownerId}">
-                    <a th:href="@{'/products/edit/' + ${product.id}}" class="edit-btn">Edit</a>
+                <div class="action-buttons">
+                    <a th:href="@{'/products/edit/' + ${product.id}}" class="edit-btn"
+                       th:if="${session.userId == product.ownerId}">Edit</a>
                     <a th:href="@{'/products/delete/' + ${product.id}}" class="delete-btn"
-                       onclick="return confirm('Are you sure you want to delete this product?')">Delete</a>
+                       onclick="return confirm('Are you sure you want to delete this product?')"
+                       th:if="${session.userId == product.ownerId or #authorization.expression('hasAuthority(T(com.example.OnlineMarketPlace.Commons).ROLE_ADMIN)')}">Delete</a>
                 </div>
             </div>
         </div>

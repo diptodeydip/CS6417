@@ -7,6 +7,9 @@ import com.example.OnlineMarketPlace.database.UserRepository;
 import com.example.OnlineMarketPlace.model.AppUser;
 import com.example.OnlineMarketPlace.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -47,6 +50,7 @@ public class MainController {
         // Store username in session
         session.setAttribute(Commons.name, appUser.get().getFirstName()+ " " + appUser.get().getLastName());
         session.setAttribute(Commons.userId, appUser.get().getId());
+        session.setAttribute(Commons.role, appUser.get().getRole());
 
         return "index";
     }
@@ -95,6 +99,7 @@ public class MainController {
             newUser.setEmail(appUserDTO.getEmail());
             newUser.setCreatedAt(new Date());
             newUser.setPassword(passwordEncoder.encode(appUserDTO.getPassword()));
+            newUser.setRole(Commons.ROLE_USER);
 
             repo.save(newUser);
 
@@ -109,7 +114,5 @@ public class MainController {
         redirectAttributes.addFlashAttribute("message", "Account created successfully!");
         return "redirect:/loginPage";
     }
-
-
 
 }

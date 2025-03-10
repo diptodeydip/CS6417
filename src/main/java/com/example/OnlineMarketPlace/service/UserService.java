@@ -1,13 +1,16 @@
 package com.example.OnlineMarketPlace.service;
 
+import com.example.OnlineMarketPlace.Commons;
 import com.example.OnlineMarketPlace.DTO.AppUserDTO;
 import com.example.OnlineMarketPlace.DTO.PasswordChangeDTO;
 import com.example.OnlineMarketPlace.database.UserRepository;
 import com.example.OnlineMarketPlace.model.AppUser;
+import com.example.OnlineMarketPlace.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
 @Service
@@ -41,5 +44,13 @@ public class UserService {
         user.get().setLastName(appUserDTO.getLastName());
         user.get().setEmail(appUserDTO.getEmail());
         userRepository.save(user.get());
+    }
+
+    public boolean isSameUser(Optional<Product> product, HttpSession session){
+        return product.isPresent() && session.getAttribute(Commons.userId) == product.get().getOwnerId();
+    }
+
+    public boolean isAdmin(String role){
+        return role.equals(Commons.ROLE_ADMIN);
     }
 }

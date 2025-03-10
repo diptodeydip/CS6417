@@ -18,6 +18,9 @@ public class ProductDTO {
     private Double price;
 
     @NotEmpty
+    private String contact;
+
+    @NotEmpty
     private String description;
 
     private MultipartFile imageFile;
@@ -44,6 +47,14 @@ public class ProductDTO {
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public String getContact() {
+        return contact;
+    }
+
+    public void setContact(String contact) {
+        this.contact = contact;
     }
 
     public String getDescription() {

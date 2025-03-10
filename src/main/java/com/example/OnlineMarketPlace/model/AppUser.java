@@ -25,6 +25,9 @@ public class AppUser {
     @Column(nullable = false)
     private String lastName;
 
+    @Column(nullable = false)
+    private String role;
+
     private Date createdAt;
 
     public Long getId() {
@@ -65,6 +68,14 @@ public class AppUser {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public Date getCreatedAt() {
