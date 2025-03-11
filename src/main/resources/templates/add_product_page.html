@@ -52,7 +52,7 @@
         <form  th:action="@{/addProduct}" th:object="${productDTO}" method="post" enctype="multipart/form-data">
             <label for="name">Product Name:</label>
             <input type="text" id="name" th:field="*{name}" class="form-control" placeholder="Product Name"
-                   required/><p th:if="${#fields.hasErrors('name')}" th:errorclass="text-danger"
+                   required/><p th:if="${#fields.hasErrors('name')}" class="warning"
                                 th:errors="*{name}"></p>
 
             <label for="price">Price:</label>
@@ -69,6 +69,8 @@
 
             <label for="image">Product Image: (Max 4MB)</label>
             <input type="file" id="image" name="image" th:field="*{imageFile}" accept="image/*" required>
+            <p th:if="${#fields.hasErrors('imageFile')}" class="warning"
+               th:errors="*{imageFile}"></p>
 
             <button type="submit">Upload Product</button>
         </form>

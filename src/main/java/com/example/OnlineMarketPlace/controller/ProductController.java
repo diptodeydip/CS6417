@@ -68,6 +68,15 @@ public class ProductController {
     public String addProduct(Model model, @Valid @ModelAttribute ProductDTO productDTO
             , BindingResult result, HttpSession session, RedirectAttributes redirectAttributes) {
 
+        String contentType = productDTO.getImageFile().getContentType();
+        if (contentType == null || (!contentType.equals("image/jpeg") && !contentType.equals("image/png") && !contentType.equals("image/jpg"))) {
+            result.addError(
+                    new FieldError("productDTO", "imageFile",
+                           "unsupported file")
+            );
+            return "add_product_page"; // Redirect back to the upload page
+        }
+
         try {
             Product product = new Product();
             product.setName(productDTO.getName());
@@ -89,7 +98,6 @@ public class ProductController {
         }
 
         redirectAttributes.addFlashAttribute("message", "Product uploaded successfully!");
-        redirectAttributes.addFlashAttribute("messageType", "flash-success");
         return "redirect:/products";
     }
 
@@ -99,11 +107,9 @@ public class ProductController {
         if (userService.isSameUser(product, session) || (userService.isAdmin((String) session.getAttribute(Commons.role)) && product.isPresent())) {
             productRepo.deleteById(id);
             redirectAttributes.addFlashAttribute("message", "Product deleted successfully!");
-            redirectAttributes.addFlashAttribute("messageType", "flash-success");
 
         }else {
             redirectAttributes.addFlashAttribute("message", "Not authorized to delete this product");
-            redirectAttributes.addFlashAttribute("messageType", "flash-error");
         }
         return "redirect:/products";
     }
@@ -124,7 +130,6 @@ public class ProductController {
 
         }else {
             redirectAttributes.addFlashAttribute("message", "Not authorized to edit this product");
-            redirectAttributes.addFlashAttribute("messageType", "flash-error");
         }
         return "redirect:/products";
     }
@@ -133,6 +138,15 @@ public class ProductController {
     @PostMapping("editProduct")
     public String editProduct(Model model, @Valid @ModelAttribute ProductDTO productDTO
             , BindingResult result, HttpSession session, RedirectAttributes redirectAttributes) {
+
+        String contentType = productDTO.getImageFile().getContentType();
+        if (contentType == null || (!contentType.equals("image/jpeg") && !contentType.equals("image/png") && !contentType.equals("image/jpg"))) {
+            result.addError(
+                    new FieldError("productDTO", "imageFile",
+                            "unsupported file")
+            );
+            return "edit_product_page"; // Redirect back to the upload page
+        }
 
         try {
             Product product = new Product();
@@ -156,7 +170,6 @@ public class ProductController {
         }
 
         redirectAttributes.addFlashAttribute("message", "Product edited successfully!");
-        redirectAttributes.addFlashAttribute("messageType", "flash-success");
         return "redirect:/products";
     }
 }
