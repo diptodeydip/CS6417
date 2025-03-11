@@ -5,6 +5,7 @@ package com.example.OnlineMarketPlace.DTO;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Date;
 
@@ -16,7 +17,15 @@ public class AppUserDTO {
     @Email
     private String email;
 
+    // ^(?=.*[a-z])            // At least one lowercase letter
+    //(?=.*[A-Z])             // At least one uppercase letter
+    //(?=.*\d)                // At least one digit
+    //(?=.*[@#$!%*?&])         // At least one special character (@, #, $, !, %, *, ?, &)
+    //[A-Za-z\d@#$!%*?&]+$     // Only allows letters, digits, and the specified special characters
+
     @Size(min = 8, message = "Minimum password length is 8 characters")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$!%*?&])[A-Za-z\\d@#$!%*?&]+$",
+            message = "Password must contain at least 8 characters, including uppercase, lowercase, numbers, and special symbols (@#$!%*?&).")
     private String password;
 
     private String confirmPassword;

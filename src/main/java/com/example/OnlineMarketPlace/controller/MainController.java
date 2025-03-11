@@ -5,6 +5,7 @@ import com.example.OnlineMarketPlace.DTO.FeedbackDTO;
 import com.example.OnlineMarketPlace.DTO.PasswordChangeDTO;
 import com.example.OnlineMarketPlace.database.UserRepository;
 import com.example.OnlineMarketPlace.model.AppUser;
+import com.example.OnlineMarketPlace.service.CacheService;
 import com.example.OnlineMarketPlace.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.Date;
@@ -41,6 +43,9 @@ public class MainController {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
+    @Autowired
+    private CacheService cacheService;
+
     @GetMapping("index")
     public String index(Model model, HttpSession session) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -56,9 +61,29 @@ public class MainController {
     }
 
     @GetMapping("loginPage")
-    public String loginPage(Model model) {
+    public String loginPage(HttpServletRequest request, Model model) {
+        String ipAddress = request.getRemoteAddr();
+        if (cacheService.getData(ipAddress) != null && cacheService.getData(ipAddress)>= 5) {
+            model.addAttribute("locked", true);
+            model.addAttribute("ip", ipAddress);
+        }
         return "login_page";
     }
+
+    @GetMapping("loginError")
+    public String loginError(HttpServletRequest request, Model model, RedirectAttributes redirectAttributes) {
+        String ipAddress = request.getRemoteAddr();  // Get request sender's IP
+
+        if (cacheService.getData(ipAddress) != null ) {
+            cacheService.putData(ipAddress, cacheService.getData(ipAddress)+1);
+        }else {
+            cacheService.putData(ipAddress, 1);
+        }
+
+        redirectAttributes.addFlashAttribute("message", "Invalid username or password!");
+        return "redirect:/loginPage";
+    }
+
 
     @GetMapping("registerPage")
     public String register(Model model) {
