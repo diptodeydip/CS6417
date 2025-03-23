@@ -6,4 +6,5 @@ public class Commons {
     public static String role = "role";
     public static String ROLE_ADMIN = "ROLE_ADMIN";
     public static String ROLE_USER = "ROLE_USER";
+    public static String MFA_VERIFIED = "MFA_VERIFIED";
 }

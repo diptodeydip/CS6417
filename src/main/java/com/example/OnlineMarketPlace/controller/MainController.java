@@ -2,16 +2,21 @@ package com.example.OnlineMarketPlace.controller;
 import com.example.OnlineMarketPlace.Commons;
 import com.example.OnlineMarketPlace.DTO.AppUserDTO;
 import com.example.OnlineMarketPlace.DTO.FeedbackDTO;
+import com.example.OnlineMarketPlace.DTO.OtpCode;
 import com.example.OnlineMarketPlace.DTO.PasswordChangeDTO;
 import com.example.OnlineMarketPlace.database.UserRepository;
 import com.example.OnlineMarketPlace.model.AppUser;
 import com.example.OnlineMarketPlace.service.CacheService;
+import com.example.OnlineMarketPlace.service.EmailService;
 import com.example.OnlineMarketPlace.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -28,7 +33,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/")
@@ -39,6 +46,9 @@ public class MainController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private EmailService emailService;
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
@@ -58,6 +68,42 @@ public class MainController {
         session.setAttribute(Commons.role, appUser.get().getRole());
 
         return "index";
+    }
+
+    @GetMapping("mfa")
+    public String mfa(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName(); // Fetch logged-in username
+        String otp = emailService.generateOTP();
+        cacheService.putData(email, Integer.valueOf(otp));
+        emailService.sendOtp(email, otp);
+        model.addAttribute(new OtpCode());
+        return "mfa";
+    }
+
+    @PostMapping("otp")
+    public String mfa(@ModelAttribute OtpCode otpCode, RedirectAttributes redirectAttributes) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName(); // Fetch logged-in username
+
+        if (cacheService.getData(email) != null && cacheService.getData(email).toString().equals(otpCode.getCode())) {
+            // Get existing roles
+            List<GrantedAuthority> updatedAuthorities = authentication.getAuthorities().stream()
+                    .map(authority -> new SimpleGrantedAuthority(authority.getAuthority()))
+                    .collect(Collectors.toList());
+            // Add new role
+            updatedAuthorities.add(new SimpleGrantedAuthority(Commons.MFA_VERIFIED));
+            // Create new authentication token
+            Authentication newAuth = new UsernamePasswordAuthenticationToken(authentication.getPrincipal(),
+                    authentication.getCredentials(), updatedAuthorities);
+            // Update Security Context
+            SecurityContextHolder.getContext().setAuthentication(newAuth);
+
+            return "redirect:/index";
+        }
+
+        redirectAttributes.addFlashAttribute("message", "Invalid OTP");
+        return "redirect:/mfa";
     }
 
     @GetMapping("loginPage")

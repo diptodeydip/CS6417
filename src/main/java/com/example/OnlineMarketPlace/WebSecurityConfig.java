@@ -36,20 +36,29 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeRequests() //authorization check happens in bottom to top manner. matcher with arbitrary scope is placed in bottom.
-                .antMatchers(  "/register", "/registerPage", "/css/*").permitAll()
+                .antMatchers(  "/register", "/registerPage", "/css/**").permitAll()
                 .antMatchers("/feedback", "/submitFeedback").hasAuthority(Commons.ROLE_USER)
                 .antMatchers("/feedbacks").hasAuthority(Commons.ROLE_ADMIN)
-                .anyRequest().authenticated()
+                .antMatchers("/mfa", "/otp").authenticated()
+                .antMatchers("/**").hasAuthority(Commons.MFA_VERIFIED)
+                .anyRequest().authenticated() //means all the request url should be mfa verified, but some exceptions are mentioned above.
                 .and()
                 .formLogin()
                 .loginPage("/loginPage")
                 .loginProcessingUrl("/login")
                 .failureUrl("/loginError")
-                .defaultSuccessUrl("/index", true).permitAll()
+                .defaultSuccessUrl("/mfa", true).permitAll()
                 .and()
                 .logout()
-                .logoutSuccessUrl("/loginPage?logout=true").permitAll() // URL to redirect after logout (optional) .hasAuthority("ROLE_USER") .loginPage("/loginPage").loginProcessingUrl("/login")
-                ;
+                .logoutSuccessUrl("/loginPage?logout=true").permitAll()// URL to redirect after logout (optional) .hasAuthority("ROLE_USER") .loginPage("/loginPage").loginProcessingUrl("/login")
+                .and()
+                .exceptionHandling(exception -> exception
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            // Invalidate session and logout
+                            request.getSession().invalidate();
+                            response.sendRedirect("/logout"); // Redirect to logout
+                        }))
+        ;
     }
 
     @Bean
