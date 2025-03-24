@@ -71,6 +71,7 @@
             <p><strong>Email:</strong> <span th:text="${appUserDTO.email}"></span></p>
             <p><strong>First Name:</strong> <span th:text="${appUserDTO.firstName}"></span></p>
             <p><strong>Last Name:</strong> <span th:text="${appUserDTO.lastName}"></span></p>
+            <p><strong>Role:</strong> <span th:text="${appUserDTO.role}"></span></p>
             <p><strong>Account Created On:</strong> <span th:text="${#dates.format(appUserDTO.createdAt, 'dd MMM yyyy')}"></span></p>
         </div>
 

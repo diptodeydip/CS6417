@@ -52,6 +52,7 @@ public class ProfileController {
         appUserDTO.setEmail(appUser.get().getEmail());
         appUserDTO.setFirstName(appUser.get().getFirstName());
         appUserDTO.setLastName(appUser.get().getLastName());
+        appUserDTO.setRole(appUser.get().getRole());
         appUserDTO.setCreatedAt(appUser.get().getCreatedAt());
         model.addAttribute(appUserDTO);
         return "user_profile";

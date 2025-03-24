@@ -36,6 +36,9 @@ public class AppUserDTO {
     @NotEmpty
     private String lastName;
 
+    @NotEmpty
+    private String role;
+
     private Date createdAt;
 
     public Long getId() {
@@ -84,6 +87,14 @@ public class AppUserDTO {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public Date getCreatedAt() {
