@@ -55,25 +55,25 @@
 
     <form th:action="@{/register}" th:object="${appUserDTO}" method="post">
 
-        <label>First Name</label>
+        <label>First Name *</label>
         <input type="text" th:field="*{firstName}" class="form-control"
-               required/><p th:if="${#fields.hasErrors('firstName')}" class="warning"
+               required  maxlength="100"/><p th:if="${#fields.hasErrors('firstName')}" class="warning"
                             th:errors="*{firstName}"></p>
-        <label>Last Name</label>
+        <label>Last Name *</label>
         <input type="text" th:field="*{lastName}" class="form-control"
-               required/><p th:if="${#fields.hasErrors('lastName')}" class="warning"
+               required maxlength="100"/><p th:if="${#fields.hasErrors('lastName')}" class="warning"
                             th:errors="*{lastName}"></p>
-        <label>Email</label>
-        <input type="email" th:field="*{email}" class="form-control" placeholder="Email" required />
+        <label>Email *</label>
+        <input type="email" th:field="*{email}" class="form-control" placeholder="Email" required maxlength="100"/>
         <p th:if="${#fields.hasErrors('email')}" class="warning"
            th:errors="*{email}"></p>
-        <label>Password</label>
+        <label>Password *</label>
         <input type="password" th:field="*{password}" class="form-control"
-               required/><p th:if="${#fields.hasErrors('password')}" class="warning"
+               required maxlength="30"/><p th:if="${#fields.hasErrors('password')}" class="warning"
                             th:errors="*{password}"></p>
-        <label>Confirm Password</label>
+        <label>Confirm Password *</label>
         <input type="password" th:field="*{confirmPassword}" class="form-control"
-               required/><p th:if="${#fields.hasErrors('confirmPassword')}" class="warning"
+               required maxlength="30"/><p th:if="${#fields.hasErrors('confirmPassword')}" class="warning"
                             th:errors="*{confirmPassword}"></p>
         <button type="submit">Register</button>
     </form>

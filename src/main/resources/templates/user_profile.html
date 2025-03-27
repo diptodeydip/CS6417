@@ -78,14 +78,13 @@
         <!-- Form to update profile -->
         <h3>Update Profile</h3>
         <form th:action="@{/updateProfile}" th:object="${appUserDTO}" method="post" class="profile-form">
-            <input type="hidden" th:field="*{id}" />
             <label for="firstName">First Name</label>
-            <input type="text" id="firstName" th:field="*{firstName}" required>
+            <input type="text" id="firstName" th:field="*{firstName}" required maxlength="100">
 
             <label for="lastName">Last Name</label>
-            <input type="text" id="lastName" th:field="*{lastName}" required>
+            <input type="text" id="lastName" th:field="*{lastName}" required maxlength="100">
             <label for="email">Email</label>
-            <input type="email" id="email" th:field="*{email}" required>
+            <input type="email" id="email" th:field="*{email}" required maxlength="100">
             <p th:if="${#fields.hasErrors('email')}" class="warning"
                th:errors="*{email}"></p>
             <button type="submit">Update Profile</button>

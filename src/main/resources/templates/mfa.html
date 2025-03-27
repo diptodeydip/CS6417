@@ -62,7 +62,7 @@
     <form th:action="@{/otp}"  th:object="${otpCode}" method="post">
         <label>Enter OTP</label>
         <input type="text" th:field="*{code}" class="form-control" placeholder="otp"
-               required/>
+               required maxlength="100"/>
         <button type="submit">Submit</button>
     </form>
 

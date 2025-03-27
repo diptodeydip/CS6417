@@ -21,6 +21,8 @@ public class CustomUserDetails implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
          GrantedAuthority authority = new SimpleGrantedAuthority(user.getRole());
+         //GrantedAuthority authority1 = new SimpleGrantedAuthority(Commons.MFA_VERIFIED);
+        //grantedAuthorities.add(authority1);
          grantedAuthorities.add(authority);
 
         return grantedAuthorities;

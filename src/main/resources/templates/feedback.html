@@ -63,7 +63,7 @@
         <form  th:action="@{/submitFeedback}" th:object="${feedbackDTO}" method="post">
 
             <label for="feedback">Write here</label>
-            <textarea id="feedback" th:field="*{description}" name="feedback" rows="3" required></textarea>
+            <textarea id="feedback" th:field="*{description}" name="feedback" rows="3" required maxlength="100"></textarea>
 
             <button type="submit">Submit</button>
         </form>

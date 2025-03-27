@@ -36,7 +36,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeRequests() //authorization check happens in bottom to top manner. matcher with arbitrary scope is placed in bottom.
-                .antMatchers(  "/register", "/registerPage", "/css/**").permitAll()
+                .antMatchers(  "/register", "/registerPage", "/css/**", "/favicon.ico").permitAll()
                 .antMatchers("/feedback", "/submitFeedback").hasAuthority(Commons.ROLE_USER)
                 .antMatchers("/feedbacks").hasAuthority(Commons.ROLE_ADMIN)
                 .antMatchers("/mfa", "/otp").authenticated()
@@ -77,7 +77,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public Cache<String, Integer> caffeineCache() {
         return Caffeine.newBuilder()
-                .expireAfterWrite(1, TimeUnit.MINUTES)
+                .expireAfterWrite(5, TimeUnit.MINUTES)
                 .maximumSize(100)
                 .build();
     }

@@ -78,7 +78,7 @@
         <!-- Success Modal -->
         <div class="modal-overlay">
             <div class="modal">
-                <p>        You have been logged out successfully.</p>
+                <p>        You have been logged out.</p>
                 <button class="close-btn" onclick="closeModal()">Close</button>
             </div>
         </div>
@@ -89,8 +89,8 @@
         <p  th:text="'Your IP is address (' + ${ip} + ') is temporarily blocked. Please try again later. '"></p>
     </div>
     <form th:action="@{/login}"  th:if="${locked == null}" method="post">
-        <input type="email" id="username" name="username" placeholder="Email"  required>
-        <input type="password"  id="password" name="password" placeholder="Password"  required>
+        <input type="email" id="username" name="username" placeholder="Email"  required maxlength="100">
+        <input type="password"  id="password" name="password" placeholder="Password"  required maxlength="30">
         <button type="submit">Login</button>
     </form>
     <div class="register-link" th:if="${locked == null}">

@@ -82,10 +82,9 @@ public class MainController {
     }
 
     @PostMapping("otp")
-    public String mfa(@ModelAttribute OtpCode otpCode, RedirectAttributes redirectAttributes) {
+    public String mfa(@ModelAttribute OtpCode otpCode, RedirectAttributes redirectAttributes, HttpSession session) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName(); // Fetch logged-in username
-
         if (cacheService.getData(email) != null && cacheService.getData(email).toString().equals(otpCode.getCode())) {
             // Get existing roles
             List<GrantedAuthority> updatedAuthorities = authentication.getAuthorities().stream()
@@ -98,7 +97,7 @@ public class MainController {
                     authentication.getCredentials(), updatedAuthorities);
             // Update Security Context
             SecurityContextHolder.getContext().setAuthentication(newAuth);
-
+            session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
             return "redirect:/index";
         }
 
@@ -109,7 +108,7 @@ public class MainController {
     @GetMapping("loginPage")
     public String loginPage(HttpServletRequest request, Model model) {
         String ipAddress = request.getRemoteAddr();
-        if (cacheService.getData(ipAddress) != null && cacheService.getData(ipAddress)>= 5) {
+        if (cacheService.getData(ipAddress) != null && cacheService.getData(ipAddress)>= 3) {
             model.addAttribute("locked", true);
             model.addAttribute("ip", ipAddress);
         }
