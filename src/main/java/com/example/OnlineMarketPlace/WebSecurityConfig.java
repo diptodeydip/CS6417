@@ -37,8 +37,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeRequests() //authorization check happens in bottom to top manner. matcher with arbitrary scope is placed in bottom.
                 .antMatchers(  "/register", "/registerPage", "/css/**", "/favicon.ico").permitAll()
-                .antMatchers("/feedback", "/submitFeedback").hasAuthority(Commons.ROLE_USER)
-                .antMatchers("/feedbacks").hasAuthority(Commons.ROLE_ADMIN)
+                .antMatchers("/feedback", "/submitFeedback")
+                .access("hasAuthority('" + Commons.ROLE_USER + "') and hasAuthority('" + Commons.MFA_VERIFIED + "')")
+                .antMatchers("/feedbacks")
+                .access("hasAuthority('" + Commons.ROLE_ADMIN + "') and hasAuthority('" + Commons.MFA_VERIFIED + "')")
                 .antMatchers("/mfa", "/otp").authenticated()
                 .antMatchers("/**").hasAuthority(Commons.MFA_VERIFIED)
                 .anyRequest().authenticated() //means all the request url should be mfa verified, but some exceptions are mentioned above.
@@ -48,6 +50,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginProcessingUrl("/login")
                 .failureUrl("/loginError")
                 .defaultSuccessUrl("/mfa", true).permitAll()
+                //.defaultSuccessUrl("/index", true).permitAll()
                 .and()
                 .logout()
                 .logoutSuccessUrl("/loginPage?logout=true").permitAll()// URL to redirect after logout (optional) .hasAuthority("ROLE_USER") .loginPage("/loginPage").loginProcessingUrl("/login")
